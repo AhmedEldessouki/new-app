@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "kentcdodds/es6",
+    "kentcdodds/import",
+    "kentcdodds/react",
+    "kentcdodds/jsx-a11y",
+    "kentcdodds/jest"
+  ],
+  "rules": {
+    "react/prop-types": "off",
+    "jsx-a11y/autocomplete-valid": "off",
+    "jest/no-done-callback": "off",
+    "testing-library/no-await-sync-events": "off",
+    "react/react-in-jsx-scope": "warn"
+  }
+}
