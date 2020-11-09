@@ -59,7 +59,6 @@ function Budget() {
       setTotal(newTotal => {
         return (newTotal = total + value.valueAsNumber)
       })
-      console.log(value.valueAsNumber)
     } else if (value.value < 0) {
       setOutcome([
         ...outcome,
@@ -106,7 +105,6 @@ function Budget() {
               color: 'white',
               padding: 5,
               margin: 5,
-
               border: 0,
             }}
             name="value"
@@ -120,7 +118,6 @@ function Budget() {
               color: 'white',
               padding: 4,
               margin: 5,
-
               border: 0,
             }}
             type="submit"
