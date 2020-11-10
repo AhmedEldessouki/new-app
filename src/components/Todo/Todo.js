@@ -33,10 +33,24 @@ function Todo() {
     }
   }
   return (
-    <>
-      <h1>Todo</h1>
+    <div
+      style={{
+        height: ' 500px',
+        minWidth: '45%',
+        background: 'darkgreen',
+        marginTop: '30px',
+        overflow: 'auto',
+      }}
+    >
+      <h1 style={{textAlign: 'center', width: '100%'}}>Todo</h1>
       <div>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            textAlign: 'center',
+            width: '100%',
+          }}
+        >
           <input
             name="todo"
             style={{
@@ -45,6 +59,7 @@ function Todo() {
               padding: 5,
               margin: 5,
               border: 0,
+              width: 200,
             }}
             value={todo}
             onChange={e => setTodo(e.target.value)}
@@ -106,7 +121,7 @@ function Todo() {
           })}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
