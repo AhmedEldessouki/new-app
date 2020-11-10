@@ -6,11 +6,9 @@ import Todo from './components/Todo/Todo'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Todo />
-        <Budget />
-      </header>
+    <div className="App-header">
+      <Todo />
+      <Budget />
     </div>
   )
 }
