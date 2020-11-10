@@ -1,92 +1,72 @@
 import * as React from 'react'
 import randomToken from 'random-token'
 
-function Blocks({value = [], name = ''}) {
-  return (
-    <td>
-      <h2>{name.toLocaleUpperCase()}</h2>
-      {value?.map(({name, value, id}) => {
-        return (
-          <tr
-            key={id}
-            style={{
-              display: 'flex',
-              placeContent: 'space-between',
-              placeItems: 'center',
-              padding: '10px',
-              minWidth: '90%',
-              border: '1px solid white',
-            }}
-          >
-            <th>{name}</th>
-            <th>{value}</th>
-          </tr>
-        )
-      })}
-    </td>
-  )
-}
+import useBudget from './custom-hook'
+import Blocks from './Blocks'
 
 function Budget() {
-  const [income, setIncome] = React.useState([
-    {
-      id: randomToken(5),
-      name: 'income',
-      value: 0,
-    },
-  ])
-  const [outcome, setOutcome] = React.useState([
-    {
-      id: randomToken(5),
-      name: 'outcome',
-      value: 0,
-    },
-  ])
-  const [total, setTotal] = React.useState(0)
+  const [{income, outcome, total}, dispatch] = useBudget()
 
   function handleSubmit(e) {
     e.preventDefault()
     const {name, value} = e.target.elements
     if (value.valueAsNumber > 0) {
-      setIncome([
-        ...income,
-        {
-          id: randomToken(5),
-          name: name.value,
-          value: value.valueAsNumber,
-        },
-      ])
-      setTotal(newTotal => {
-        return (newTotal = total + value.valueAsNumber)
-      })
-    } else if (value.value < 0) {
-      setOutcome([
-        ...outcome,
-        {
-          id: randomToken(5),
-          name: name.value,
-          value: value.valueAsNumber,
-        },
-      ])
-      setTotal(total + value.valueAsNumber)
+      if (income?.find(item => item.name === name.value)) {
+        console.log('oooops')
+      } else {
+        dispatch({
+          type: 'add_income',
+          payload: {
+            id: randomToken(5),
+            name: name.value,
+            value: value.valueAsNumber,
+          },
+        })
+      }
+    } else if (value.valueAsNumber < 0) {
+      if (outcome?.find(item => item.name === name.value)) {
+        console.log('oooops')
+      } else {
+        dispatch({
+          type: 'add_outcome',
+          payload: {
+            id: randomToken(5),
+            name: name.value,
+            value: value.valueAsNumber,
+          },
+        })
+      }
     } else {
       throw new Error('Ooops! something is not Right')
     }
+    e.currentTarget.reset()
   }
   return (
-    <>
-      <h1>Budget Calculator</h1>
+    <div
+      style={{
+        height: ' 500px',
+        minWidth: '45%',
+        background: 'darkslateblue',
+        marginTop: '30px',
+        overflow: 'auto',
+      }}
+    >
+      <h1 style={{textAlign: 'center', width: '100%'}}>Budget Calculator</h1>
       <div style={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap'}}>
         <span
           style={{
             fontSize: '5rem',
             minWidth: '100%',
+            textAlign: 'center',
             color: total > 0 ? '#019a01' : total < 0 ? 'red' : 'white',
           }}
         >
           {total}
         </span>
-        <form onSubmit={handleSubmit} style={{minWidth: '100%'}}>
+        <form
+          onSubmit={handleSubmit}
+          style={{minWidth: '100%', display: 'flex', placeContent: 'center'}}
+        >
           <input
             style={{
               background: '#6d6d6d33',
@@ -125,12 +105,20 @@ function Budget() {
             Add
           </button>
         </form>
-        <table style={{width: '100%', margin: 0}}>
-          <Blocks value={income} name="income" />
-          <Blocks value={outcome} name="outcome" />
-        </table>
+        <div
+          style={{
+            width: '100%',
+            margin: 0,
+            display: 'flex',
+            flexFlow: 'row wrap',
+            placeContent: 'space-around',
+          }}
+        >
+          <Blocks value={income} nameC="income" dispatchB={dispatch} />
+          <Blocks value={outcome} nameC="outcome" dispatchB={dispatch} />
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 
