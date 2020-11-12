@@ -1,36 +1,49 @@
 import randomToken from 'random-token'
 import * as React from 'react'
 
-function todosReducer(state = [], {type, payload}) {
+import Verification from '../utils/Verification'
+import RenderTodos from './renderTodos'
+
+function todosReducer({todos = [], error = null} = {}, {type, payload}) {
   switch (type) {
     case 'add':
-      console.log(state)
-      return {todos: [...state.todos, {id: randomToken(5), value: payload}]}
+      return {
+        todos: [...todos, {id: randomToken(5), value: payload}],
+      }
     case 'remove':
-      console.log('here')
-      state.todos.splice(payload, 1)
-      return {...state}
+      todos?.splice(payload, 1)
+      return {todos: [...todos]}
+    case 'done':
+      const xyz = {...todos[payload], done: true}
+      todos?.splice(payload, 1, xyz)
+      console.log(todos[payload])
+      return {todos: [...todos]}
+    case 'duplicate':
+      return {todos: [...todos], error: true}
 
     default:
-      return state
+      throw new Error(`The type: ${type} does not exist in "todosReducer"`)
   }
 }
 
 function Todo() {
-  const [todos, setTodos] = React.useState([])
-  const [todo, setTodo] = React.useState('')
-
-  React.useEffect(() => {}, [todos])
+  const [{todos, error}, dispatch] = React.useReducer(todosReducer, {todos: []})
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (todos?.find(item => item.value === todo)) {
-      setTodo('')
-      return console.log('oooops')
+    const {todo} = e.target.elements
+
+    if (todos?.find(item => item.value === todo.value.trim())) {
+      dispatch({
+        type: 'duplicate',
+      })
     } else {
-      setTodos([...todos, {id: randomToken(5), value: todo}])
-      setTodo('')
+      dispatch({
+        type: 'add',
+        payload: todo.value.trim(),
+      })
     }
+    e.currentTarget.reset()
   }
   return (
     <div
@@ -49,6 +62,7 @@ function Todo() {
           style={{
             textAlign: 'center',
             width: '100%',
+            marginBottom: 20,
           }}
         >
           <input
@@ -61,8 +75,6 @@ function Todo() {
               border: 0,
               width: 200,
             }}
-            value={todo}
-            onChange={e => setTodo(e.target.value)}
             required
           />
           <button
@@ -77,6 +89,7 @@ function Todo() {
           >
             Add
           </button>
+          {error ? <Verification /> : null}
         </form>
         <div
           style={{
@@ -85,38 +98,18 @@ function Todo() {
             textAlign: 'left',
             textTransform: 'capitalize',
             margin: '10px 5px',
+            placeItems: 'center',
           }}
         >
-          {todos.map(({id, value}, i) => {
+          {todos?.map(({id, value, done}, i) => {
             return (
-              <div
+              <RenderTodos
                 key={id}
-                style={{
-                  display: 'flex',
-                  borderBottom: '1px solid cadetblue',
-                  padding: '2px 4px',
-                  placeContent: 'space-between',
-                }}
-              >
-                <span key={id}>{value}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    todos.splice(i, 1)
-                    setTodos([...todos])
-                  }}
-                  style={{
-                    background: 'red',
-                    color: 'white',
-                    border: 0,
-                    fontSize: 20,
-                    margin: 5,
-                    paddingBottom: 3,
-                  }}
-                >
-                  <b>x</b>
-                </button>
-              </div>
+                value={value}
+                done={done}
+                i={i}
+                dispatchT={dispatch}
+              />
             )
           })}
         </div>

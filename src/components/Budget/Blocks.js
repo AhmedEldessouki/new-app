@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Confirmation from '../utils/Comfirmation'
+import Confirmation from '../utils/Confirmation'
 
 function Blocks({value = [], nameC = '', dispatchB}) {
   return (
