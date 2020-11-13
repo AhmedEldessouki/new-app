@@ -5,6 +5,12 @@ function reducer(state, {type}) {
     case 'idle':
       return {status: 'idle'}
 
+    case 'hide':
+      return {status: 'hide'}
+
+    case 'show':
+      return {status: 'show'}
+
     case 'pending':
       return {status: 'pending'}
 

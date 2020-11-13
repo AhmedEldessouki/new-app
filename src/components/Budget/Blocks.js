@@ -1,5 +1,6 @@
 import * as React from 'react'
-import Confirmation from '../utils/Confirmation'
+
+import Block from './Block'
 
 function Blocks({value = [], nameC = '', dispatchB}) {
   return (
@@ -9,34 +10,29 @@ function Blocks({value = [], nameC = '', dispatchB}) {
           borderBottom: '12px solid indigo',
           textAlign: 'center',
           borderRadius: 10,
+          marginTop: '9px',
+          marginBottom: 0,
         }}
       >
         {nameC.toLocaleUpperCase()}
       </h2>
       {value?.map(({name, value, id}, i) => {
         return (
-          <>
-            <div
-              key={id}
-              style={{
-                display: 'flex',
-                placeContent: 'space-between',
-                placeItems: 'center',
-                padding: '10px',
-                minWidth: '90%',
-                borderBottom: `3px solid `,
-                borderColor: nameC === 'income' ? '#019a01' : 'red',
-              }}
-            >
-              <div>{name}</div>
-              <div>{value}</div>
-            </div>
-            <Confirmation
+          <div
+            key={id}
+            style={{
+              borderBottom:
+                nameC === 'income' ? '3px solid #019a01' : '3px solid red',
+            }}
+          >
+            <Block
+              name={name}
+              value={value}
               handleClick={() =>
                 dispatchB({type: `remove_${nameC}`, payload: i})
               }
             />
-          </>
+          </div>
         )
       })}
     </div>

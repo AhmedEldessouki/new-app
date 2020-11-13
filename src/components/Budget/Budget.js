@@ -1,18 +1,19 @@
 import * as React from 'react'
 import randomToken from 'random-token'
 
+import Verification from '../utils/Verification'
 import useBudget from './custom-hook'
 import Blocks from './Blocks'
 
 function Budget() {
-  const [{income, outcome, total}, dispatch] = useBudget()
+  const [{income, outcome, total, error}, dispatch] = useBudget()
 
   function handleSubmit(e) {
     e.preventDefault()
     const {name, value} = e.target.elements
     if (value.valueAsNumber > 0) {
       if (income?.find(item => item.name === name.value)) {
-        console.log('oooops')
+        dispatch({type: 'error', payload: 'in income'})
       } else {
         dispatch({
           type: 'add_income',
@@ -25,7 +26,7 @@ function Budget() {
       }
     } else if (value.valueAsNumber < 0) {
       if (outcome?.find(item => item.name === name.value)) {
-        console.log('oooops')
+        dispatch({type: 'error', payload: 'in outcome'})
       } else {
         dispatch({
           type: 'add_outcome',
@@ -47,11 +48,13 @@ function Budget() {
         height: ' 500px',
         minWidth: '45%',
         background: 'darkslateblue',
-        marginTop: '30px',
+        margin: '30px 0',
         overflow: 'auto',
       }}
     >
-      <h1 style={{textAlign: 'center', width: '100%'}}>Budget Calculator</h1>
+      <h1 style={{textAlign: 'center', width: '100%', margin: '7px 0'}}>
+        Budget Calculator
+      </h1>
       <div style={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap'}}>
         <span
           style={{
@@ -105,6 +108,7 @@ function Budget() {
             Add
           </button>
         </form>
+        {error ? <Verification message={error} /> : null}
         <div
           style={{
             width: '100%',

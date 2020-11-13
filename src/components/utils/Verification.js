@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-function Verification() {
+function Verification({message = ''}) {
   return (
     <span
       style={{
@@ -12,7 +12,7 @@ function Verification() {
       }}
       role="alert"
     >
-      already exists
+      already exists {message}
     </span>
   )
 }
