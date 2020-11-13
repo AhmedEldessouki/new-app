@@ -16,7 +16,6 @@ function todosReducer({todos = [], error = null} = {}, {type, payload}) {
     case 'done':
       const xyz = {...todos[payload], done: true}
       todos?.splice(payload, 1, xyz)
-      console.log(todos[payload])
       return {todos: [...todos]}
     case 'duplicate':
       return {todos: [...todos], error: true}
@@ -51,7 +50,7 @@ function Todo() {
         height: ' 500px',
         minWidth: '45%',
         background: 'darkgreen',
-        marginTop: '30px',
+        margin: '30px 0',
         overflow: 'auto',
       }}
     >

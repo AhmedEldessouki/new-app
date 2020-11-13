@@ -12,20 +12,22 @@ const bTn = {
   paddingBottom: 3,
   padding: '3px 10px ',
   fontWeight: 'bold',
-  // background: 'white',
 }
 
-function Confirmation({handleClick, handleDone = () => {}, isDone = true}) {
-  const [x, setX] = React.useState(false)
-  const [{status}, dispatch] = useAsync('')
+function Confirmation({
+  handleClick = () => {},
+  handleDone = () => {},
+  isDone = true,
+}) {
+  const [{status}, dispatch] = useAsync({initStatus: 'hide'})
 
-  if (x && status !== 'pending') {
+  if (status === 'show') {
     return (
       <div>
         you sure?
         <button
           onClick={() => {
-            setX(false)
+            dispatch({type: 'hide'})
             dispatch({type: 'pending'})
             setTimeout(() => {
               dispatch({type: 'deleted'})
@@ -42,7 +44,7 @@ function Confirmation({handleClick, handleDone = () => {}, isDone = true}) {
           Yes
         </button>
         <button
-          onClick={() => setX(false)}
+          onClick={() => dispatch({type: 'hide'})}
           style={{
             ...bTn,
             background: 'green',
@@ -53,11 +55,12 @@ function Confirmation({handleClick, handleDone = () => {}, isDone = true}) {
         </button>
       </div>
     )
-  } else if (!x && status !== 'pending') {
+  }
+  if (status === 'hide') {
     return (
       <div>
         <button
-          onClick={() => setX(true)}
+          onClick={() => dispatch({type: 'show'})}
           type="button"
           style={{
             ...bTn,
@@ -74,7 +77,8 @@ function Confirmation({handleClick, handleDone = () => {}, isDone = true}) {
               }, 1000)
               setTimeout(() => {
                 handleDone()
-              }, 1100)
+                dispatch({type: 'hide'})
+              }, 1200)
             }}
             type="button"
             style={{
@@ -87,9 +91,11 @@ function Confirmation({handleClick, handleDone = () => {}, isDone = true}) {
         )}
       </div>
     )
-  } else if (status === 'pending') {
+  }
+  if (status === 'pending') {
     return <div className="spinner1" />
-  } else if (status === 'deleted') {
+  }
+  if (status === 'deleted') {
     return <span>✅</span>
   }
 }
