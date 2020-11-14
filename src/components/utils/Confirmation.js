@@ -23,7 +23,7 @@ function Confirmation({
 
   if (status === 'show') {
     return (
-      <div>
+      <div aria-label="confirmation">
         you sure?
         <button
           onClick={() => {
@@ -40,6 +40,7 @@ function Confirmation({
             ...bTn,
             width: '50px',
           }}
+          data-testid="yes"
         >
           Yes
         </button>
@@ -50,6 +51,7 @@ function Confirmation({
             background: 'green',
             width: '50px',
           }}
+          data-testid="No"
         >
           No
         </button>
@@ -65,11 +67,13 @@ function Confirmation({
           style={{
             ...bTn,
           }}
+          data-testid="del"
         >
           X
         </button>
         {isDone ? null : (
           <button
+            data-testid="done"
             onClick={() => {
               dispatch({type: 'pending'})
               setTimeout(() => {
@@ -93,10 +97,10 @@ function Confirmation({
     )
   }
   if (status === 'pending') {
-    return <div className="spinner1" />
+    return <div className="spinner1" aria-label="loading" />
   }
   if (status === 'deleted') {
-    return <span>✅</span>
+    return <span aria-label="done">✅</span>
   }
 }
 export default Confirmation
