@@ -97,7 +97,7 @@ describe('Todo Component', () => {
 
     expect(await screen.findByLabelText(/loading/i)).toBeInTheDocument()
     expect(await screen.findByLabelText(/done/i)).toBeInTheDocument()
-    await waitForElementToBeRemoved(screen.queryByText(todo))
+    await waitForElementToBeRemoved(() => screen.queryByText(todo))
     expect(screen.queryByText(todo)).not.toBeInTheDocument()
   })
 
