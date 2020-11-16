@@ -65,6 +65,7 @@ function Todo() {
           }}
         >
           <input
+            aria-label="enter todo"
             name="todo"
             style={{
               background: '#6d6d6d33',
@@ -84,6 +85,7 @@ function Todo() {
               margin: 5,
               border: 0,
             }}
+            aria-label="add todo"
             type="submit"
           >
             Add
