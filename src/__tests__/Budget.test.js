@@ -1,17 +1,12 @@
 import * as React from 'react'
-import {
-  getByLabelText,
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
+import {render, screen, waitForElementToBeRemoved} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import faker from 'faker'
-import Todo from '../components/Todo/Todo'
+import Budget from '../components/Budget/Budget'
+import {act} from 'react-dom/test-utils'
 
-describe('Todo Component', () => {
+describe('Budget Component', () => {
   beforeEach(() => {
     jest.useFakeTimers()
   })
@@ -20,71 +15,84 @@ describe('Todo Component', () => {
     jest.useRealTimers()
   })
 
-  test('Add to ToDo', () => {
-    render(<Todo />)
-    const todo = faker.lorem.sentence(30)
-    expect(screen.getByText(/todo/i)).toBeInTheDocument()
+  const randomNumber = num => {
+    return faker.random.number(num)
+  }
+  test('Add to Income and Outcome', () => {
+    render(<Budget />)
+    const budgetName = faker.lorem.words(2)
+    const budgetValuePositive = randomNumber(999)
+    const budgetValueNegative = randomNumber(-999)
 
-    userEvent.type(screen.getByLabelText(/enter todo/i), todo)
-    userEvent.click(screen.getByLabelText(/add todo/i))
+    expect(screen.getByText(/budget Calculator/i)).toBeInTheDocument()
+    expect(screen.getByText(/income/i)).toBeInTheDocument()
+    expect(screen.getByText(/outcome/i)).toBeInTheDocument()
 
-    expect(screen.getByText(todo)).toBeInTheDocument()
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(0)
 
-    userEvent.hover(screen.getByText(todo))
-    const buttons = screen.getAllByRole('button')
+    userEvent.type(screen.getByLabelText(/enter name/i), budgetName)
+    userEvent.type(
+      screen.getByLabelText(/enter value/i),
+      `${budgetValuePositive}`,
+    )
+    userEvent.click(screen.getByLabelText(/add budget/i))
 
-    expect(buttons[0]).toHaveAttribute('type', 'submit')
-    expect(buttons[1]).toHaveAttribute('data-testid', 'del')
-    expect(buttons[2]).toHaveAttribute('data-testid', 'done')
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(
+      `${budgetValuePositive}`,
+    )
+
+    userEvent.type(screen.getByLabelText(/enter name/i), budgetName)
+    userEvent.type(
+      screen.getByLabelText(/enter value/i),
+      `${budgetValueNegative}`,
+    )
+    userEvent.click(screen.getByLabelText(/add budget/i))
+
+    const total = budgetValuePositive + budgetValueNegative
+
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(`${total}`)
+
+    expect(screen.getAllByText(budgetName)).toHaveLength(2)
   })
-  test('add Todo and mark it done', async () => {
-    render(<Todo />)
-    const todo = faker.lorem.sentence(30)
+  test('add and remove budgets', async () => {
+    render(<Budget />)
+    const budgetName = faker.lorem.words(2)
+    const budgetValuePositive = randomNumber(999)
+    const budgetValueNegative = randomNumber(-999)
 
-    userEvent.type(screen.getByLabelText(/enter todo/i), todo)
-    userEvent.click(screen.getByLabelText(/add todo/i))
+    expect(screen.getByText(/budget Calculator/i)).toBeInTheDocument()
+    expect(screen.getByText(/income/i)).toBeInTheDocument()
+    expect(screen.getByText(/outcome/i)).toBeInTheDocument()
 
-    userEvent.hover(screen.getByText(todo))
-    const buttons = screen.getAllByRole('button')
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(0)
 
-    expect(buttons[0]).toHaveAttribute('type', 'submit')
-    expect(buttons[1]).toHaveAttribute('data-testid', 'del')
-    expect(buttons[2]).toHaveAttribute('data-testid', 'done')
+    userEvent.type(screen.getByLabelText(/enter name/i), budgetName)
+    userEvent.type(
+      screen.getByLabelText(/enter value/i),
+      `${budgetValuePositive}`,
+    )
+    userEvent.click(screen.getByLabelText(/add budget/i))
 
-    userEvent.click(buttons[1])
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(
+      `${budgetValuePositive}`,
+    )
 
-    expect(screen.getByTestId(/yes/i)).toBeInTheDocument()
-    expect(screen.getByTestId(/no/i)).toBeInTheDocument()
+    userEvent.type(screen.getByLabelText(/enter name/i), budgetName)
+    userEvent.type(
+      screen.getByLabelText(/enter value/i),
+      `${budgetValueNegative}`,
+    )
+    userEvent.click(screen.getByLabelText(/add budget/i))
 
-    userEvent.click(screen.getByTestId(/no/i))
+    const total = budgetValuePositive + budgetValueNegative
 
-    expect(screen.queryByTestId(/yes/i)).not.toBeInTheDocument()
-    expect(screen.queryByTestId(/no/i)).not.toBeInTheDocument()
+    expect(screen.getByTestId(/total/i)).toHaveTextContent(`${total}`)
 
-    userEvent.click(buttons[2])
+    expect(screen.getAllByText(budgetName)).toHaveLength(2)
 
-    expect(await screen.findByLabelText(/loading/i)).toBeInTheDocument()
-    expect(await screen.findByLabelText(/done/i)).toBeInTheDocument()
-    expect(await screen.findByTestId(/del/i)).toBeInTheDocument()
+    const budgetNames = screen.getAllByText(budgetName)
 
-    expect(screen.queryByLabelText(/loading/i)).not.toBeInTheDocument()
-    expect(screen.queryByLabelText(/done/i)).not.toBeInTheDocument()
-
-    expect(screen.queryByTestId(/done/i)).not.toBeInTheDocument()
-    expect(screen.getByTestId(/del/i)).toBeInTheDocument()
-  })
-
-  test('add and remove ToDo', async () => {
-    render(<Todo />)
-    const todo = faker.lorem.sentence(30)
-    expect(screen.getByText(/todo/i)).toBeInTheDocument()
-
-    userEvent.type(screen.getByLabelText(/enter todo/i), todo)
-    userEvent.click(screen.getByLabelText(/add todo/i))
-
-    expect(screen.getByText(todo)).toBeInTheDocument()
-
-    userEvent.hover(screen.getByText(todo))
+    userEvent.hover(budgetNames[0])
 
     userEvent.click(screen.getByTestId(/del/i))
 
@@ -97,25 +105,23 @@ describe('Todo Component', () => {
 
     expect(await screen.findByLabelText(/loading/i)).toBeInTheDocument()
     expect(await screen.findByLabelText(/done/i)).toBeInTheDocument()
-    await waitForElementToBeRemoved(() => screen.queryByText(todo))
-    expect(screen.queryByText(todo)).not.toBeInTheDocument()
-  })
 
-  test('Duplication Error Message Check', () => {
-    render(<Todo />)
-    const todo = faker.lorem.sentence(30)
-    expect(screen.getByText(/todo/i)).toBeInTheDocument()
+    userEvent.hover(budgetNames[1])
 
-    userEvent.type(screen.getByLabelText(/enter todo/i), todo)
-    userEvent.click(screen.getByLabelText(/add todo/i))
+    userEvent.click(screen.getByTestId(/del/i))
 
-    expect(screen.getByText(todo)).toBeInTheDocument()
+    expect(screen.getByText(/you sure/i)).toBeInTheDocument()
 
-    userEvent.type(screen.getByLabelText(/enter todo/i), todo)
-    userEvent.click(screen.getByLabelText(/add todo/i))
+    expect(screen.getByTestId(/yes/i)).toBeInTheDocument()
+    expect(screen.getByTestId(/no/i)).toBeInTheDocument()
 
-    expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
-      `"already exists "`,
-    )
+    userEvent.click(screen.getByTestId(/yes/i))
+
+    expect(await screen.findByLabelText(/loading/i)).toBeInTheDocument()
+    expect(await screen.findByLabelText(/done/i)).toBeInTheDocument()
+
+    await waitForElementToBeRemoved(() => screen.queryAllByText(budgetName))
+
+    expect(screen.queryByText(budgetName)).not.toBeInTheDocument()
   })
 })

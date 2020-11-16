@@ -11,7 +11,11 @@ function Budget() {
   function handleSubmit(e) {
     e.preventDefault()
     const {name, value} = e.target.elements
-    if (value.valueAsNumber > 0) {
+
+    const submitedNumber =
+      typeof value.value === 'number' ? value.value : value.valueAsNumber
+
+    if (submitedNumber > 0) {
       if (income?.find(item => item.name === name.value)) {
         dispatch({type: 'error', payload: 'in income'})
       } else {
@@ -20,11 +24,11 @@ function Budget() {
           payload: {
             id: randomToken(5),
             name: name.value,
-            value: value.valueAsNumber,
+            value: submitedNumber,
           },
         })
       }
-    } else if (value.valueAsNumber < 0) {
+    } else if (submitedNumber < 0) {
       if (outcome?.find(item => item.name === name.value)) {
         dispatch({type: 'error', payload: 'in outcome'})
       } else {
@@ -33,7 +37,7 @@ function Budget() {
           payload: {
             id: randomToken(5),
             name: name.value,
-            value: value.valueAsNumber,
+            value: submitedNumber,
           },
         })
       }
@@ -63,6 +67,7 @@ function Budget() {
             textAlign: 'center',
             color: total > 0 ? '#019a01' : total < 0 ? 'red' : 'white',
           }}
+          data-testid="total"
         >
           {total}
         </span>
@@ -81,6 +86,7 @@ function Budget() {
             name="name"
             placeholder="name"
             required
+            aria-label="Enter name"
           />
           <input
             style={{
@@ -94,6 +100,7 @@ function Budget() {
             placeholder="value"
             type="number"
             required
+            aria-label="Enter Value"
           />
           <button
             style={{
@@ -104,6 +111,7 @@ function Budget() {
               border: 0,
             }}
             type="submit"
+            aria-label="add budget"
           >
             Add
           </button>
