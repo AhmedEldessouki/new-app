@@ -7,16 +7,31 @@ import RenderTodos from './renderTodos'
 function todosReducer({todos = [], error = null} = {}, {type, payload}) {
   switch (type) {
     case 'add':
+      window.localStorage.setItem(
+        'todo',
+        JSON.stringify([...todos, {id: randomToken(5), value: payload}]),
+      )
       return {
         todos: [...todos, {id: randomToken(5), value: payload}],
       }
+
     case 'remove':
       todos?.splice(payload, 1)
+      window.localStorage.setItem('todo', JSON.stringify(todos))
       return {todos: [...todos]}
+
     case 'done':
-      const xyz = {...todos[payload], done: true}
-      todos?.splice(payload, 1, xyz)
+      const markDone = {...todos[payload], done: true}
+      todos?.splice(payload, 1, markDone)
+      window.localStorage.setItem('todo', JSON.stringify(todos))
       return {todos: [...todos]}
+
+    case 'mark_undone':
+      const markUndone = {...todos[payload], done: null}
+      todos?.splice(payload, 1, markUndone)
+      window.localStorage.setItem('todo', JSON.stringify(todos))
+      return {todos: [...todos]}
+
     case 'duplicate':
       return {todos: [...todos], error: true}
 
@@ -26,7 +41,11 @@ function todosReducer({todos = [], error = null} = {}, {type, payload}) {
 }
 
 function Todo() {
-  const [{todos, error}, dispatch] = React.useReducer(todosReducer, {todos: []})
+  const [{todos, error}, dispatch] = React.useReducer(todosReducer, {
+    todos: window.localStorage.getItem('todo')
+      ? JSON.parse(window.localStorage.getItem('todo'))
+      : [],
+  })
 
   function handleSubmit(e) {
     e.preventDefault()

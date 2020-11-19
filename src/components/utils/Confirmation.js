@@ -17,11 +17,13 @@ const bTn = {
 function Confirmation({
   handleClick = () => {},
   handleDone = () => {},
+  handleUnDone = () => {},
   isDone = true,
+  show,
+  componentName,
 }) {
   const [{status}, dispatch] = useAsync({initStatus: 'hide'})
-
-  if (status === 'show') {
+  if (status === 'show' && show) {
     return (
       <div aria-label="confirmation">
         you sure?
@@ -58,7 +60,7 @@ function Confirmation({
       </div>
     )
   }
-  if (status === 'hide') {
+  if (status === 'hide' && show) {
     return (
       <div>
         <button
@@ -71,28 +73,51 @@ function Confirmation({
         >
           X
         </button>
-        {isDone ? null : (
-          <button
-            data-testid="done"
-            onClick={() => {
-              dispatch({type: 'pending'})
-              setTimeout(() => {
-                dispatch({type: 'deleted'})
-              }, 1000)
-              setTimeout(() => {
-                handleDone()
-                dispatch({type: 'hide'})
-              }, 1200)
-            }}
-            type="button"
-            style={{
-              ...bTn,
-              background: 'green',
-            }}
-          >
-            ✔
-          </button>
-        )}
+        {componentName === 'todo' ? (
+          isDone ? (
+            <button
+              data-testid="mark undone"
+              onClick={() => {
+                dispatch({type: 'pending'})
+                setTimeout(() => {
+                  dispatch({type: 'deleted'})
+                }, 1000)
+                setTimeout(() => {
+                  handleUnDone()
+                  dispatch({type: 'hide'})
+                }, 1200)
+              }}
+              type="button"
+              style={{
+                ...bTn,
+                background: 'green',
+              }}
+            >
+              ✔
+            </button>
+          ) : (
+            <button
+              data-testid="done"
+              onClick={() => {
+                dispatch({type: 'pending'})
+                setTimeout(() => {
+                  dispatch({type: 'deleted'})
+                }, 1000)
+                setTimeout(() => {
+                  handleDone()
+                  dispatch({type: 'hide'})
+                }, 1200)
+              }}
+              type="button"
+              style={{
+                ...bTn,
+                background: 'green',
+              }}
+            >
+              ✔
+            </button>
+          )
+        ) : null}
       </div>
     )
   }
@@ -101,6 +126,6 @@ function Confirmation({
   }
   if (status === 'deleted') {
     return <span aria-label="done">✅</span>
-  }
+  } else return null
 }
 export default Confirmation

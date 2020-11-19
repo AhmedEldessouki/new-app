@@ -15,26 +15,27 @@ const doneStyle = {
 }
 
 function RenderTodos({value, done, i, dispatchT}) {
-  const [y, setY] = React.useState(false)
+  const [hovered, setHovered] = React.useState(false)
 
   return (
     <div
       style={done ? {...stlying, ...doneStyle} : {...stlying}}
-      onMouseEnter={() => setY(true)}
-      onMouseLeave={() => setY(false)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <span
         style={done ? {color: 'black', textDecoration: 'line-through'} : null}
       >
         {value}
       </span>
-      {y ? (
-        <Confirmation
-          isDone={done ? true : false}
-          handleClick={() => dispatchT({type: `remove`, payload: i})}
-          handleDone={() => dispatchT({type: `done`, payload: i})}
-        />
-      ) : null}
+      <Confirmation
+        componentName="todo"
+        isDone={done ? true : false}
+        show={hovered}
+        handleClick={() => dispatchT({type: `remove`, payload: i})}
+        handleDone={() => dispatchT({type: `done`, payload: i})}
+        handleUnDone={() => dispatchT({type: `mark_undone`, payload: i})}
+      />
     </div>
   )
 }

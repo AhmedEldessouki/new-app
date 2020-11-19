@@ -8,6 +8,7 @@ import Budget from '../components/Budget/Budget'
 describe('Budget Component', () => {
   beforeEach(() => {
     jest.useFakeTimers()
+    window.localStorage.clear()
   })
 
   afterEach(() => {
