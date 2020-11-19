@@ -25,13 +25,12 @@ function Block({name, value, handleClick}) {
         <span>{name}</span>
         <span>{value}</span>
       </div>
-      {hovered ? (
-        <Confirmation
-          handleClick={() => {
-            handleClick()
-          }}
-        />
-      ) : null}
+      <Confirmation
+        handleClick={() => {
+          handleClick()
+        }}
+        show={hovered}
+      />
     </div>
   )
 }

@@ -14,6 +14,7 @@ import Todo from '../components/Todo/Todo'
 describe('Todo Component', () => {
   beforeEach(() => {
     jest.useFakeTimers()
+    window.localStorage.clear()
   })
 
   afterEach(() => {
@@ -71,7 +72,7 @@ describe('Todo Component', () => {
     expect(await screen.findByTestId(/del/i)).toBeInTheDocument()
     expect(screen.queryByLabelText(/done/i)).not.toBeInTheDocument()
 
-    expect(screen.queryByTestId(/done/i)).not.toBeInTheDocument()
+    expect(screen.getByTestId(/mark undone/i)).toBeInTheDocument()
     expect(screen.getByTestId(/del/i)).toBeInTheDocument()
   })
 
